@@ -1,44 +1,40 @@
-setfpscap(120)
+local a = game:GetService("VirtualInputManager")
+local b = game:GetService("RunService")
+local c = game:GetService("Players").LocalPlayer
+local d = loadstring(game:HttpGet("https://raw.githubusercontent.com/DenDenZYT/DenDenZ-s-Open-Source-Collection/main/Component"))() 
 
-getgenv().AutoParry = true
+local e = false
 
-local inputManager = game:GetService("VirtualInputManager")
-local runService = game:GetService("RunService")
-local localPlayer = game:GetService("Players").LocalPlayer
-local APH = loadstring(game:HttpGet("https://raw.githubusercontent.com/DenDenZYT/DenDenZ-s-Open-Source-Collection/main/Component"))() 
+spawn(function()
+    b.PreRender:Connect(function()
+        if not getgenv().f then return end
 
+        local g = d.FindTargetBall()
+        if not g then return end
 
-local eventTriggered = false
-
-task.spawn(function()
-    runService.PreRender:Connect(function()
-        if not getgenv().AutoParry then return end
-
-        local currentBall = APH.FindTargetBall()
-        if not currentBall then return end
-
-        local currentBallVelocity = currentBall.AssemblyLinearVelocity
-        if currentBall:FindFirstChild('zoomies') then 
-            currentBallVelocity = currentBall.zoomies.VectorVelocity
+        local h = g.AssemblyLinearVelocity
+        if g:FindFirstChild('zoomies') then 
+            h = g.zoomies.VectorVelocity
         end
 
-        local currentBallPosition = currentBall.Position
-        local playerCharacterPosition = localPlayer.Character.PrimaryPart.Position
-        local directionFromBallToPlayer = (playerCharacterPosition - currentBallPosition).Unit
-        local distanceFromPlayerToBall = localPlayer:DistanceFromCharacter(currentBallPosition)
-        local dotProductValue = directionFromBallToPlayer:Dot(currentBallVelocity.Unit)
-        local velocityMagnitude = currentBallVelocity.Magnitude
+        local i = g.Position
+        local j = c.Character.PrimaryPart.Position
+        local k = (j - i).Unit
+        local l = c:DistanceFromCharacter(i)
+        local m = k:Dot(h.Unit)
+        local n = h.Magnitude
 
-        if dotProductValue > 0 then
-            local adjustedDistance = distanceFromPlayerToBall - 5
-            local estimatedTimeToReach = adjustedDistance / velocityMagnitude
+        if m > 0 then
+            local o = l - 5
+            local p = o / n
 
-            if APH.IsPlayerTarget(currentBall) and estimatedTimeToReach <= 0.5 and not eventTriggered then
-                inputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-                eventTriggered = true
+            if d.IsPlayerTarget(g) and p <= 0.30 and not e then
+                a:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+                wait(0.01)
+                e = true
             end
         else
-            eventTriggered = false
+            e = false
         end
     end)
 end)
